@@ -4,11 +4,21 @@ Kernel.const_get(rspec_module)::Matchers.define :be_able_to do |*args|
     ability.can?(*args)
   end
 
-  failure_message_for_should do |ability|
-    "expected to be able to #{args.map(&:inspect).join(" ")}"
-  end
+  if RSpec::Core::Version::STRING =~ /^3\./
+    failure_message do |ability|
+      "expected to be able to #{args.map(&:inspect).join(" ")}"
+    end
 
-  failure_message_for_should_not do |ability|
-    "expected not to be able to #{args.map(&:inspect).join(" ")}"
+    failure_message_when_negated do |ability|
+      "expected not to be able to #{args.map(&:inspect).join(" ")}"
+    end
+  else
+    failure_message_for_should do |ability|
+      "expected to be able to #{args.map(&:inspect).join(" ")}"
+    end
+
+    failure_message_for_should_not do |ability|
+      "expected not to be able to #{args.map(&:inspect).join(" ")}"
+    end
   end
 end
